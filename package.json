@@ -1,0 +1,38 @@
+{
+    "name": "chrome-focus-mode",
+    "version": "0.1.0",
+    "description": "Focus mode for Chrome extensions — block distracting sites, timer-based sessions, whitelist domains, and productivity tracking for MV3.",
+    "author": "Zovo <hello@zovo.one>",
+    "license": "MIT",
+    "keywords": [
+        "chrome-extension",
+        "focus",
+        "productivity",
+        "block",
+        "distraction",
+        "timer",
+        "whitelist",
+        "manifest-v3",
+        "browser-extension",
+        "pomodoro"
+    ],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/theluckystrike/chrome-focus-mode.git"
+    },
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "files": [
+        "dist",
+        "README.md",
+        "LICENSE"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "prepublishOnly": "npm run build"
+    },
+    "devDependencies": {
+        "@types/chrome": "^0.0.260",
+        "typescript": "^5.3.3"
+    }
+}
