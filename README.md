@@ -47,6 +47,15 @@ await focus.start(25);
 console.log(focus.getRemainingFormatted());
 ```
 
+## Tutorial
+
+For a complete step-by-step guide to building a focus mode Chrome extension, see the [Tutorial](docs/tutorial.md). It covers:
+
+- **Setup from scratch** — Create a complete Chrome extension project
+- **Feature deep dives** — Understand how site blocking, timers, and session tracking work
+- **Real-world examples** — Developer deep work, student study sessions, work-life balance
+- **Troubleshooting** — Common issues and solutions
+
 ## Contributing
 
 Contributions are welcome! Please follow these steps:
