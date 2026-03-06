@@ -1,92 +1,88 @@
-# chrome-focus-mode — Focus Mode for Extensions
+# chrome-focus-mode
 
-[![npm version](https://img.shields.io/npm/v/chrome-focus-mode)](https://npmjs.com/package/chrome-focus-mode)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
-[![Chrome Web Extension](https://img.shields.io/badge/Chrome-Web%20Extension-orange.svg)](https://developer.chrome.com/docs/extensions/)
-[![CI Status](https://github.com/theluckystrike/chrome-focus-mode/actions/workflows/ci.yml/badge.svg)](https://github.com/theluckystrike/chrome-focus-mode/actions)
-[![Discord](https://img.shields.io/badge/Discord-Zovo-blueviolet.svg?logo=discord)](https://discord.gg/zovo)
-[![Website](https://img.shields.io/badge/Website-zovo.one-blue)](https://zovo.one)
-[![GitHub Stars](https://img.shields.io/github/stars/theluckystrike/chrome-focus-mode?style=social)](https://github.com/theluckystrike/chrome-focus-mode)
+Focus mode toolkit for Chrome MV3 extensions. Block distracting sites with declarativeNetRequest rules, run timed Pomodoro sessions, manage a whitelist, persist session history to chrome.storage, and use built-in domain presets for social media, news, and video sites. Ships with full TypeScript definitions.
 
-> Block distracting sites, timed Pomodoro sessions, whitelist, session history, and presets.
-
-**chrome-focus-mode** provides focus mode functionality for Chrome extensions. Block distracting sites, run timed Pomodoro sessions, manage whitelists, and track session history.
-
-Part of the [Zovo](https://zovo.one) developer tools family.
-
-## Features
-
-- ✅ **Site Blocking** - Block distracting websites
-- ✅ **Pomodoro Timer** - Built-in focus timer
-- ✅ **Whitelist** - Allow specific sites
-- ✅ **Session History** - Track focus sessions
-- ✅ **Presets** - Pre-built blocklists
-- ✅ **TypeScript Support** - Full type definitions included
-
-## Installation
+INSTALL
 
 ```bash
 npm install chrome-focus-mode
 ```
 
-## Usage
+Your extension manifest needs the declarativeNetRequest and storage permissions.
+
+QUICK START
 
 ```typescript
-import { FocusMode } from 'chrome-focus-mode';
+import { FocusMode } from "chrome-focus-mode";
 
 const focus = new FocusMode();
 
-// Set blocklist using preset
+// Load a preset blocklist and allow one domain through
 focus.setBlocklist(FocusMode.PRESETS.SOCIAL);
+focus.setWhitelist(["reddit.com"]);
 
-// Start 25-minute focus session
+// Start a 25-minute session (default is 25 if omitted)
 await focus.start(25);
 
-// Get remaining time
-console.log(focus.getRemainingFormatted());
+// Check status while running
+console.log(focus.isActive());            // true
+console.log(focus.getRemainingFormatted()); // "24:58"
+console.log(focus.getRemaining());         // milliseconds left
+
+// End early and get a summary
+const result = await focus.stop();
+// result.duration  -> elapsed ms
+// result.blocked   -> ["facebook.com", "twitter.com", ...]
+
+// Persist the session for later analytics
+await focus.saveSession();
 ```
 
-## Tutorial
+API REFERENCE
 
-For a complete step-by-step guide to building a focus mode Chrome extension, see the [Tutorial](docs/tutorial.md). It covers:
+FocusMode (class)
 
-- **Setup from scratch** — Create a complete Chrome extension project
-- **Feature deep dives** — Understand how site blocking, timers, and session tracking work
-- **Real-world examples** — Developer deep work, student study sessions, work-life balance
-- **Troubleshooting** — Common issues and solutions
+setBlocklist(domains: string[]): this
+    Accepts an array of domain strings to block during focus. Returns the instance for chaining.
 
-## Contributing
+setWhitelist(domains: string[]): this
+    Accepts an array of domain strings that should remain accessible even if they appear in the blocklist. Returns the instance for chaining.
 
-Contributions are welcome! Please follow these steps:
+start(durationMinutes?: number): Promise<void>
+    Activates focus mode. Installs declarativeNetRequest dynamic rules that redirect blocked domains to about:blank. Defaults to 25 minutes. Automatically calls stop() when time runs out.
 
-1. **Fork** the repository
-2. **Create** a feature branch: `git checkout -b feature/focus-feature`
-3. **Make** your changes
-4. **Test** your changes: `npm test`
-5. **Commit** your changes: `git commit -m 'Add new feature'`
-6. **Push** to the branch: `git push origin feature/focus-feature`
-7. **Submit** a Pull Request
+stop(): Promise<{ duration: number; blocked: string[] }>
+    Ends the session, removes all blocking rules, and returns an object with the elapsed time in milliseconds and the list of domains that were blocked.
 
-## See Also
+isActive(): boolean
+    Returns true while a session is running.
 
-### Related Zovo Repositories
+getRemaining(): number
+    Returns the number of milliseconds left in the current session, or 0 if no session is active.
 
-- [chrome-tab-discard](https://github.com/theluckystrike/chrome-tab-discard) - Tab discarding
-- [chrome-storage-plus](https://github.com/theluckystrike/chrome-storage-plus) - Type-safe storage
+getRemainingFormatted(): string
+    Returns the remaining time as a "m:ss" string, e.g. "12:05".
 
-### Zovo Chrome Extensions
+saveSession(): Promise<void>
+    Writes the current session (start timestamp, duration, blocked domains) to chrome.storage.local under the key __focus_sessions__.
 
-- [Zovo Tab Manager](https://chrome.google.com/webstore/detail/zovo-tab-manager) - Manage tabs efficiently
-- [Zovo Focus](https://chrome.google.com/webstore/detail/zovo-focus) - Block distractions
-- [Zovo Permissions Scanner](https://chrome.google.com/webstore/detail/zovo-permissions-scanner) - Check extension privacy grades
+FocusMode.PRESETS (static)
 
-Visit [zovo.one](https://zovo.one) for more information.
+PRESETS.SOCIAL
+    facebook.com, twitter.com, instagram.com, tiktok.com, reddit.com, x.com
 
-## License
+PRESETS.NEWS
+    cnn.com, bbc.com, news.google.com, nytimes.com
 
-MIT — [Zovo](https://zovo.one)
+PRESETS.VIDEO
+    youtube.com, netflix.com, twitch.tv, hulu.com
 
----
+LICENSE
 
-*Built by developers, for developers. No compromises on privacy.*
+MIT. See the LICENSE file for details.
+
+ABOUT
+
+chrome-focus-mode is maintained by theluckystrike and published through zovo.one, a small studio focused on privacy-first Chrome extensions and developer tooling.
+
+https://github.com/theluckystrike/chrome-focus-mode
